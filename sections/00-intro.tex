@@ -85,7 +85,7 @@ iter = iterator(numbers)
 v = next(iter)  # v == 1
 v = next(iter)  # v == 2
 v = next(iter)  # v == 4
-v = next(iter)  # v == null / None  
+v = next(iter)  # v == null / None
                 #   ^ We know the iterator is done
   \end{lstlisting}
 \end{frame}
@@ -106,7 +106,7 @@ v = next(iter)  # v == null / None
   \end{lstlisting}
 
   We can't have an infinite list (we don't have infinite memory), but because of
-  lazily evaluation, we've only loaded the values 1, 2, and 3. 
+  lazily evaluation, we've only loaded the values 1, 2, and 3.
 
   4, 5, 6, \ldots aren't loaded.
 \end{frame}
@@ -245,7 +245,7 @@ print(sum_val)
   \begin{lstlisting}[language=Python]
 def sum(acc, n):
   # acc : accumulated value
-  # n   : current value 
+  # n   : current value
   # return value will be `acc` for the next iteration
   return acc + n
 
@@ -292,7 +292,7 @@ print(sum_val)
   types, we can:
 
   \begin{lstlisting}[language=Python]
-  iter = iterator(some\_list)
+  iter = iterator(some_list)
   reduce(f1, filter(f2, flatmap(f3, take(5, iter))))
   \end{lstlisting}
 
@@ -364,7 +364,7 @@ print(list(filtered))
 
   \begin{lstlisting}[language=Python]
 from itertools import islice, chain
-# islice  : take first `n` values 
+# islice  : take first `n` values
 # chain   : chain iterators sequentially
 
 # Get the first five values from 3 iterators
@@ -422,7 +422,7 @@ numbers = [0, 1, 2, 3, 4, 5]
 filtered = [n for n in list if n >= 3]
 # [3, 4, 5]
 
-# `flatmap`, but this is pretty hard to read
+# `flatmap`, but this is pretty hard to read imo
 flatmapped = [x for n in list for x in [n] * 3]
 # [0, 0, 0, 1, 1, 1, 2, 2, 2, ...]
   \end{lstlisting}
@@ -431,7 +431,9 @@ flatmapped = [x for n in list for x in [n] * 3]
 % ---------------------------
 \renewcommand{\currenttitle}{In Java}
 \begin{frame}[fragile]{\currenttitle}
-  Java 8 added `Streams`, which are basically iterators:
+  Java 8 added \texttt{Streams}, which are basically iterators. \\[1em]
+
+  Streaming / iterating on an array with \texttt{Arrays.stream()}:
 
   \begin{lstlisting}[language=Java]
 import java.util.Arrays;
@@ -603,7 +605,7 @@ boolean divisible(int n) {
   A list comprehension solution:
 
   \begin{lstlisting}[language=Python]
-from math import prd
+from math import prod
 
 # List comprehension
 def words_not_the(sentence):
@@ -617,14 +619,14 @@ def words_not_the(sentence):
   An iterator solution:
 
   \begin{lstlisting}[language=Python]
-from math import prd
+from math import prod
 
 # Iterator solution
 def words_not_the(sentence):
   return prod(map(len, filter(lambda w: w != 'the',
                               sentence.split(' '))))
 
-# We can of course not write a one-liner:
+# We can of course also not write a one-liner:
 def words_not_the(sentence):
   words = sentence.split(' ')
   filtered = filter(lambda w: w != 'the', words)
