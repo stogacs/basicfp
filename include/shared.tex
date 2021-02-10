@@ -1,0 +1,21 @@
+% Font sizes
+\makeatletter
+\newcommand\HUGE{\@setfontsize\Huge{50}{60}}
+\makeatother
+
+% Default listing style
+\lstdefinestyle{default}{%
+  basicstyle=\ttfamily\footnotesize,
+  showspaces=false,
+  showstringspaces=false,
+  showtabs=false,
+  tabsize=1,
+  commentstyle=\color{black!60}
+}
+\lstset{style=default}
+
+% Repeat something n times
+\newcounter{loopcntr}
+\newcommand{\rpt}[2][1]{%
+  \forloop{loopcntr}{0}{\value{loopcntr}<#1}{#2}%
+}

@@ -1,0 +1,674 @@
+% -----------------------------------------------
+% chktex-file 44
+\documentclass[../index.tex]{subfiles}
+
+% -----------------------------------------------
+
+\begin{document}
+
+% -----------------------------------------------
+\renewcommand{\currenttitle}{Here's a list}
+\begin{frame}{\currenttitle}
+  \onslide<+->{\texttt{[0, 1, 2, 3, 4, 5]}}
+  \onslide<+->{$\rightarrow$ \texttt{[0, 1, 4, 9, 16, 25]}}
+\end{frame}
+
+% ---------------------------
+\renewcommand{\currenttitle}{A for loop solution}
+\begin{frame}[fragile]{\currenttitle}
+  Some Python code for transforming this list:
+
+  \begin{lstlisting}[language=Python]<1->
+def square(n):
+  return n * n
+
+list      = [0, 1, 2, 3, 4, 5]
+new_list  = [0, 0, 0, 0, 0, 0]
+
+for i in range(0, len(list)):
+  new_list[i] = square(list[i])
+
+print(new_list)
+# [0, 1, 4, 9, 16, 25]
+  \end{lstlisting}
+
+  \onslide<2->{\dots but this is kind of verbose}
+\end{frame}
+
+% ---------------------------
+\renewcommand{\currenttitle}{Using \texttt{map}}
+\begin{frame}[fragile]{\currenttitle}
+  We can use a concept called \texttt{map} to do the same thing in a more
+  readable way: \\[1em]
+
+  \begin{lstlisting}[language=Python]<1->
+def square(n):
+  return n * n
+
+numbers = [0, 1, 2, 3, 4, 5]
+new_numbers = map(square, numbers)
+
+print(new_numbers)
+# [0, 1, 4, 9, 16, 25]
+  \end{lstlisting}
+
+  \onslide<2->{\dots what just happened?}
+\end{frame}
+
+% ---------------------------
+\renewcommand{\currenttitle}{What is \texttt{map}}
+\begin{frame}[fragile]{\currenttitle}
+  \onslide<+->{\texttt{map} \dots}
+
+  \begin{enumerate}
+    \item<+-> takes an iterable container (i.e. a list) and a function
+    \item<+-> applies the function to each element of the container
+    \item<+-> returns a new container with the resulting elements
+  \end{enumerate}
+\end{frame}
+
+% ---------------------------
+\renewcommand{\currenttitle}{Iterators 101}
+\begin{frame}[fragile]{\currenttitle}
+  Think of iterators as objects that yield, on each iteration, the next value
+  in a collection (i.e. a list)
+
+  In imperative languages that use the iterator concept, it may be best
+  understand like so (this is pseudocode): \\[1em]
+
+  \begin{lstlisting}[language=Python]
+# We have a list
+numbers = [1, 2, 4]
+# Let's get an iterator on that list
+iter = iterator(numbers)
+# We can now iterate through the values like so
+v = next(iter)  # v == 1
+v = next(iter)  # v == 2
+v = next(iter)  # v == 4
+v = next(iter)  # v == null / None  
+                #   ^ We know the iterator is done
+  \end{lstlisting}
+\end{frame}
+
+% ---------------------------
+\begin{frame}[fragile]{\currenttitle}
+  Iterators are \textbf{lazily evaluated}; the next value isn't computed /
+  loaded until we call \texttt{next}.
+
+  The syntax \texttt{1..} in Rust produces an infinite iterator:
+
+  \begin{lstlisting}[language=Python]
+    iter = 1..
+    v = next(iter)    # v == 1
+    v = next(iter)    # v == 2
+    v = next(iter)    # v == 3
+                      # ... and forever
+  \end{lstlisting}
+
+  We can't have an infinite list (we don't have infinite memory), but because of
+  lazily evaluation, we've only loaded the values 1, 2, and 3. 
+
+  4, 5, 6, \ldots aren't loaded.
+\end{frame}
+
+% ---------------------------
+\begin{frame}[fragile]{\currenttitle}
+  For the sake of demonstrating concepts:
+
+  \begin{itemize}
+    \item \texttt{iterator(list)} creates an iterator from a collection (such as a
+          list)
+    \item \texttt{next(iterator)} gets the next value of an iterator
+    \item \texttt{list(iterator)} collects an iterator back into a list
+          (effectively call \texttt{next} until we've gotten all the values and put
+          them in a list)
+  \end{itemize}
+
+  \vspace*{2em}
+  The syntax is modeled after Python for familiarity, but the following code is
+  not valid Python.
+\end{frame}
+
+% ---------------------------
+\renewcommand{\currenttitle}{Pseudo-implementation of \texttt{map}}
+\begin{frame}[fragile]{\currenttitle}
+  Thus, \texttt{map}'s implementation might look something like this: \\[1em]
+
+  \begin{lstlisting}[language=Python]
+# Effectively returns another iterator
+def map(func, iter):
+  while true:
+    elem = next(iter)
+    if elem == null:
+      break
+    # Yield as the 'next' value for the iterator
+    yield func(elem)
+
+iter1 = iterator([1, 2, 3, 4])
+iter2 = map(square, iter1)
+v = next(iter2)   # v == 1
+v = next(iter2)   # v == 4
+v = next(iter2)   # v == 9
+  \end{lstlisting}
+\end{frame}
+
+% ---------------------------
+\renewcommand{\currenttitle}{Another \texttt{map} example}
+\begin{frame}[fragile]{\currenttitle}
+  Here's a \textit{slightly} more complex map example:
+
+  \begin{lstlisting}[language=Python]<1->
+def transform(n):
+  if n % == 0:
+    return 'even'
+  else:
+    return 'odd'
+
+iter = iterator([0, 1, 2, 3, 4, 5])
+mapped = map(transform, iter)
+
+print(list(mapped))
+# ['even', 'odd', 'even', 'odd', 'even', 'odd']
+  \end{lstlisting}
+\end{frame}
+
+% ---------------------------
+\renewcommand{\currenttitle}{Higher-order functions}
+\begin{frame}[fragile]{\currenttitle}
+  \texttt{map} is a \textbf{higher-order function} because it takes a function
+  as an argument \\[2em]
+
+  Let's look at some other core FP higher-order functions.
+\end{frame}
+
+% ---------------------------
+\renewcommand{\currenttitle}{\texttt{filter}}
+\begin{frame}[fragile]{\currenttitle}
+  \texttt{filter} effectively removes values that don't pass a test (the
+  \textbf{predicate}):
+
+  \begin{lstlisting}[language=Python]
+def is_even(n):
+  return n % 2 == 0
+
+iter = iterator([1, 2, 3, 4, 5, 6, 7])
+evens = filter(is_even, iter)
+
+print(list(evens))
+# [2, 4, 6]
+  \end{lstlisting}
+\end{frame}
+
+% ---------------------------
+\renewcommand{\currenttitle}{\texttt{flatmap}}
+\begin{frame}[fragile]{\currenttitle}
+  \onslide<1->{
+    \texttt{flatmap} is similar to map, but the given function should return a
+    list. The list of lists is \textit{flattened} into one list. \\[1em]
+  }
+
+  \begin{lstlisting}[language=Python]
+iter = iterator(['a', 'b', 'c'])
+
+# We're using Python's lambda (anonymous function) syntax
+nested = map(lambda c: [c] * 3, iter)
+print(list(nested))
+# [ ['a', 'a', 'a'], ['b', 'b', 'b'], ['c', 'c', 'c'] ]
+
+flattened = flatmap(lambda c: [c] * 3, iter)
+print(list(flattened))
+# ['a', 'a', 'a', 'b', 'b', 'b', 'c', 'c', 'c']
+  \end{lstlisting}
+\end{frame}
+
+% ---------------------------
+\renewcommand{\currenttitle}{\texttt{fold} / \texttt{reduce}}
+\begin{frame}[fragile]{\currenttitle}
+  \texttt{fold} or \texttt{reduce} (different names are used in different
+  languages / libraries) turns a list into a single value: \\[1em]
+
+  \begin{lstlisting}[language=Python]
+def sum(acc, n):
+  return acc + n
+
+iter = iterator([1, 2, 3, 4, 5])
+sum_val = reduce(sum, iter)
+
+print(sum_val)
+# 15
+  \end{lstlisting}
+\end{frame}
+
+% ---------------------------
+\begin{frame}[fragile]{\currenttitle}
+  \vspace*{1em}
+  \begin{lstlisting}[language=Python]
+def sum(acc, n):
+  # acc : accumulated value
+  # n   : current value 
+  # return value will be `acc` for the next iteration
+  return acc + n
+
+iter = iterator([1, 2, 3, 4, 5])
+sum_val = reduce(sum, iter)
+# acc is initially the first value (1)
+# 1 + 2 = 3
+# 3 + 3 = 6
+# 6 + 4 = 10
+# 10 + 5 = 15
+
+print(sum_val)
+# 15
+  \end{lstlisting}
+\end{frame}
+
+% ---------------------------
+\renewcommand{\currenttitle}{Other iterator functions}
+\begin{frame}[fragile]{\currenttitle}
+  Many languages / libraries have many other utilities besides \texttt{map},
+  \texttt{flatmap} and \texttt{reduce}.
+
+  Here are some from the Rust standard library: \\[3em]
+
+  \begin{center}
+    \begin{tabular}{ r l }
+      \texttt{chain(iter)}      & follow an iterator by the values of another   \\
+      \texttt{filter\_map(fn)}  & map and filter together                       \\
+      \texttt{sum()}            & sum the values                                \\
+      \texttt{skip(n)}          & skip (and drop) the first \texttt{n} values   \\
+      \texttt{take(n)}          & yield the first \texttt{n} values             \\
+      \texttt{take\_while(fn)}  & yield values until \texttt{fn} returns false  \\
+    \end{tabular}
+  \end{center}
+
+\end{frame}
+
+% ---------------------------
+\renewcommand{\currenttitle}{Composing iterator functions}
+\begin{frame}[fragile]{\currenttitle}
+  Iterator functions are easy to compose and read (once you get used to them).
+
+  Given that \texttt{f1}, \texttt{f2}, \texttt{f3} are functions of appropriate
+  types, we can:
+
+  \begin{lstlisting}[language=Python]
+  iter = iterator(some\_list)
+  reduce(f1, filter(f2, flatmap(f3, take(5, iter))))
+  \end{lstlisting}
+
+  In some languages, something like this is equivalent:
+
+  \begin{lstlisting}[language=Python]
+  iter.take(5).flatmap(f3).filter(f2).reduce(f1)
+  \end{lstlisting}
+
+  \onslide<2->{
+    Let's see \texttt{flatmap}, \texttt{filter}, and \texttt{reduce} together in
+    one example.
+  }
+\end{frame}
+
+% ---------------------------
+\begin{frame}[fragile]{\currenttitle}
+For a list of numbers, compute the product of the positive factors of the
+numbers: \\[1em]
+
+  \begin{lstlisting}[language=Python]
+def factors(n):
+  def is_factor(x):
+    return x % n == 0
+  return filter(is_factor, range(1, n // 2 + 1))
+
+iter = iterator([2, 4, 8, 12])
+product = reduce(lambda acc, n: acc * n,
+                 flatmap(factors, iter))
+print(product)
+# 1769472 = 2 * 2 * 4 * 2 * 4 * 8 * 2 * 3 * 4 * 6 * 12
+# 1's were omitted for brevity
+
+  \end{lstlisting}
+\end{frame}
+
+% ---------------------------
+\renewcommand{\currenttitle}{How can I use it?}
+\begin{frame}[fragile]{\currenttitle}
+  These demonstrations are all fine and good
+
+  But how can we use these ideas in real code?
+\end{frame}
+
+% ---------------------------
+\renewcommand{\currenttitle}{In Python}
+\begin{frame}[fragile]{\currenttitle}
+  Python has built-in \texttt{map} and \texttt{filter} functions almost
+  identical to the demonstration ones:
+
+  \begin{lstlisting}[language=Python]
+# You can pass in lists directly, because they're
+# considered iterators.
+numbers = [-10, -5, 0, 5, 10]
+filtered = map(lambda n: n + n,
+               filter(lambda n: n >= 0, numbers))
+
+# We still have to collect the iterator to a list using
+# the `list` function.
+print(list(filtered))
+# [0, 10, 20]
+  \end{lstlisting}
+\end{frame}
+
+% ---------------------------
+\renewcommand{\currenttitle}{In Python: \texttt{itertools}}
+\begin{frame}[fragile]{\currenttitle}
+  Other higher-order functions can be found in the \texttt{itertools} module:
+
+  \begin{lstlisting}[language=Python]
+from itertools import islice, chain
+# islice  : take first `n` values 
+# chain   : chain iterators sequentially
+
+# Get the first five values from 3 iterators
+list0 = [1]
+list1 = [5, 6]
+list2 = [99, 98, 97, 96, 95, 94]
+
+first_five = islice(chain(list0, list1, list2), 5)
+print(list(first_five))
+# [1, 5, 6, 99, 98]
+  \end{lstlisting}
+\end{frame}
+
+% ---------------------------
+\begin{frame}[fragile]{\currenttitle}
+  We can emulate \texttt{flatmap} like so: \\[1em]
+
+  \begin{lstlisting}[language=Python]
+from itertools import chain
+
+def flatmap(f, iter):
+  return chain.from_iterable(map(f, iter))
+  \end{lstlisting}
+\end{frame}
+
+% ---------------------------
+\renewcommand{\currenttitle}{In Python: List comprehensions}
+\begin{frame}[fragile]{\currenttitle}
+  Python has something nifty borrowed from FP languages called \textbf{list
+  comprehensions}.
+
+  The list comprehension equivalent of our original \texttt{map} example:
+
+  \begin{lstlisting}[language=Python]
+def square(n):
+  return n * n
+
+numbers = [0, 1, 2, 3, 4, 5]
+new_numbers = [square(n) for n in numbers]
+
+# Or:
+new_numbers = [n * n for n in numbers]
+  \end{lstlisting}
+\end{frame}
+
+% ---------------------------
+\begin{frame}[fragile]{\currenttitle}
+  We can also emulate \texttt{filter} and \texttt{flatmap} using list
+  comprehensions:
+
+  \begin{lstlisting}[language=Python]
+numbers = [0, 1, 2, 3, 4, 5]
+
+# `filter`
+filtered = [n for n in list if n >= 3]
+# [3, 4, 5]
+
+# `flatmap`, but this is pretty hard to read
+flatmapped = [x for n in list for x in [n] * 3]
+# [0, 0, 0, 1, 1, 1, 2, 2, 2, ...]
+  \end{lstlisting}
+\end{frame}
+
+% ---------------------------
+\renewcommand{\currenttitle}{In Java}
+\begin{frame}[fragile]{\currenttitle}
+  Java 8 added `Streams`, which are basically iterators:
+
+  \begin{lstlisting}[language=Java]
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
+int[] numbers = new int[] { 1, 2, 3, 4, 5 };
+List<Integer> squared = Arrays.stream(numbers)
+                              .map(n -> n * n)
+                              .collect(Collectors.toList());
+# { 1, 4, 9, 16, 25 }
+  \end{lstlisting}
+\end{frame}
+
+% ---------------------------
+\begin{frame}[fragile]{\currenttitle}
+  We can also call the \texttt{stream} method on \texttt{List}'s,
+  \texttt{HashMap}'s, etc:
+
+  \begin{lstlisting}[language=Java]
+List<String> list = new ArrayList<>();
+list.add("Java");
+list.add("is");
+list.add("boring");
+list.add("!");
+
+List<String> big = list.stream()
+                       .map(s -> s.toUpperCase())
+                       .collect(Collectors.toList());
+# { "JAVA", "IS", "BORING", "!" }
+  \end{lstlisting}
+
+  Check out the \texttt{Stream} docs for all the iterator functions.
+\end{frame}
+
+% ---------------------------
+\renewcommand{\currenttitle}{Let's try}
+\begin{frame}[fragile]{\currenttitle}
+  Given a list \texttt{list}, compute the sum of the first five numbers that
+  are divisible by 5:
+
+  \begin{lstlisting}[language=Python]
+# Python
+def selectively_stringify(list):
+  # Your implementation here
+  \end{lstlisting}
+
+  \begin{lstlisting}[language=Java]
+// Java
+int selectivelyStringify(List<Integer> list) {
+  // Your implementation here
+}
+  \end{lstlisting}
+
+  Try writing an implementation with a \texttt{for} loop first, then one with
+  iterators.
+
+\end{frame}
+
+% ---------------------------
+\renewcommand{\currenttitle}{Let's try: Python solutions}
+\begin{frame}[fragile]{\currenttitle}
+  \begin{lstlisting}[language=Python]
+# Python: for loop solution
+def selectively_stringify(list):
+  c = 0
+  sum = 0
+  for n in list:
+    if c < 5:
+      if n % 5 == 0:
+        sum += n
+        c += 1
+    else:
+      break
+  return sum
+  \end{lstlisting}
+\end{frame}
+
+% ---------------------------
+\begin{frame}[fragile]{\currenttitle}
+  \begin{lstlisting}[language=Python]
+# Python
+def selectively_stringify(list):
+  def divisible(n):
+    return n % 5 == 0
+
+  # List comprehension solution:
+  return sum([n for n in list if divisible(n)][:5])
+  \end{lstlisting}
+\end{frame}
+
+% ---------------------------
+\begin{frame}[fragile]{\currenttitle}
+  \begin{lstlisting}[language=Python]
+# Faster, better implementation:
+iter = filter(lambda n: divisible(n), list)
+return sum([next(iter) for _ in range(5)])
+
+
+# Or, using itertools:
+from itertools import islice
+
+iter = filter(lambda n: divisible(n), list)
+return sum(islice(iter, 5))
+  \end{lstlisting}
+\end{frame}
+
+% ---------------------------
+\renewcommand{\currenttitle}{Let's try: Java solutions}
+\begin{frame}[fragile]{\currenttitle}
+  \begin{lstlisting}[language=Java]
+// Java: for loop solution
+int selectivelyStringify(List<Integer> list) {
+  int c = 0;
+  int sum = 0;
+  for (int n : list) {
+    if c < 5 {
+      if n % 5 == 0 {
+        sum += n;
+        c += 1;
+      }
+    } else { break; }
+  }
+  return sum;
+}
+  \end{lstlisting}
+\end{frame}
+
+% ---------------------------
+\begin{frame}[fragile]{\currenttitle}
+  \begin{lstlisting}[language=Java]
+// Java: iterator solution
+int selectivelyStringify(List<Integer> list) {
+  return list.stream()
+             .filter(divisible)
+             .limit(5)
+             .sum();
+}
+
+boolean divisible(int n) {
+  return n % 5 == 0
+}
+  \end{lstlisting}
+\end{frame}
+
+
+% ---------------------------
+\renewcommand{\currenttitle}{Try another}
+\begin{frame}[fragile]{\currenttitle}
+  Given a sentence, compute the product of the lengths of each word in the
+  sentence, but only if the word is not "the":
+
+  \begin{lstlisting}[language=Python]
+  # Python
+  def words_not_the(sentence):
+    # Your implementation here!
+  \end{lstlisting}
+
+  \begin{lstlisting}[language=Java]
+  // Java
+  int wordsNotThe(String sentence) {
+    // Your implementation here!
+  }
+  \end{lstlisting}
+\end{frame}
+
+% ---------------------------
+\renewcommand{\currenttitle}{Try another: Python solution}
+\begin{frame}[fragile]{\currenttitle}
+  A list comprehension solution:
+
+  \begin{lstlisting}[language=Python]
+from math import prd
+
+# List comprehension
+def words_not_the(sentence):
+  return prod([len(w) for w in sentence.split(' ')
+               if w != 'the'])
+  \end{lstlisting}
+\end{frame}
+
+% ---------------------------
+\begin{frame}[fragile]{\currenttitle}
+  An iterator solution:
+
+  \begin{lstlisting}[language=Python]
+from math import prd
+
+# Iterator solution
+def words_not_the(sentence):
+  return prod(map(len, filter(lambda w: w != 'the',
+                              sentence.split(' '))))
+
+# We can of course not write a one-liner:
+def words_not_the(sentence):
+  words = sentence.split(' ')
+  filtered = filter(lambda w: w != 'the', words)
+  lengths = map(len, filtered)
+  return prod(lengths)
+  \end{lstlisting}
+\end{frame}
+
+% ---------------------------
+\renewcommand{\currenttitle}{Try another: Java solution}
+\begin{frame}[fragile]{\currenttitle}
+  A stream solution:
+
+  \begin{lstlisting}[language=Java]
+import java.util.Arrays;
+
+int wordsNotThe(String sentence) {
+  return Arrays.stream(words.split(" "))
+               .filter(w -> !w.equals("the"))
+               .map(w -> w.length())
+               .product();
+}
+  \end{lstlisting}
+\end{frame}
+
+% ---------------------------
+\renewcommand{\currenttitle}{What next?}
+\begin{frame}{\currenttitle}
+  If you're interested in making your code more concise and clear with
+  iterators: \\[1em]
+
+  \begin{itemize}
+    \item Learn about implementing iterator classes in Python
+    \item Learn about Generators in Python (and in general)
+    \item Become more familiar with Java's \texttt{Stream} API
+    \item Learn FP core concepts (purity, immutability, lazy eval, recursion, etc.)
+    \item Actually learn a functional programming language (Haskell, Lisp, etc.)
+  \end{itemize}
+\end{frame}
+
+% ---------------------------
+\renewcommand{\currenttitle}{Thanks!}
+\begin{frame}[fragile]{\currenttitle}
+  Slides here: \url{https://github.com/stogacs/basicfp}
+\end{frame}
+
+\end{document}
