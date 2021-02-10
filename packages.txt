@@ -1,17 +1,8 @@
 beamer
 beamertheme-metropolis
-bytefield
 csquotes
-dad
-enumitem
 fira
-forloop
-grfext
-haranoaji
 hyperref
-import
 listings
-multirow
 pgfopts
-polyglossia
 subfiles
